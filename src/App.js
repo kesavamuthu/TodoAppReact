@@ -37,22 +37,24 @@
 /**                                                          */
 
 import React from "react";
-// import logo from "./logo.svg";
 import "./App.css";
-import Clock from "./Clock";
-import { Button, Alert } from "react-bootstrap";
-import Greetings from "./Greetings";
+import { Container, Row, Col, Button, Alert } from "react-bootstrap";
 import ToDo from "./ToDo";
 function App() {
   return (
     <>
-      {/* <Clock />
-      <Clock />
-      <Clock />
-      <Button onClick={what}>WTF</Button>
-      <Greetings current={false} />
-      <Alerts></Alerts> */}
-      <ToDo />
+      <Container>
+        <Row>
+          <Col sm={2} />
+          <Col sm={8}>
+            <h1 style={{ textAlign: "center", font: "oblique normal 1.6em" }}>
+              todos
+            </h1>
+            <ToDo />
+          </Col>
+          <Col sm={2}></Col>
+        </Row>
+      </Container>
     </>
   );
 }

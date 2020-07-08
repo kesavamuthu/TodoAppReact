@@ -1,97 +1,131 @@
 import React from "react";
 import Input from "./Input";
 import List from "./List";
-import { Container, Row, Col, Badge, Alert } from "react-bootstrap";
+import BottomItems from "./BottomItems";
+import { FaBeer, FaSlidersH } from "react-icons/fa";
+import { Container, Row, Col, Button, Accordion } from "react-bootstrap";
+
 class ToDo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       lists: [],
+      prev: [],
+      isDeleted: "",
     };
-    this.onKeyDown = this.onKeyDown.bind(this);
+    this.save = this.save.bind(this);
     this.changeStatus = this.changeStatus.bind(this);
-    // this.refs = [React.createRef(), React.createRef(), React.createRef()];
+    this.delete = this.delete.bind(this);
   }
 
-  onKeyDown(e) {
-    let passedVal = e.target.value.trim();
-    // console.log(this);
-    // console.log(e.keyCode);
-    if (e.keyCode == 13 && passedVal) {
-      const value = e.target.value;
-      e.target.value = "";
-      const tmp = this.state.lists;
-      tmp.push({ task: value, status: "", date: new Date().getTime() });
-      this.setState({
-        lists: [...tmp],
-      });
-    }
+  async save(value) {
+    const tmp = this.state.prev;
+    tmp.push({ task: value, status: "", date: new Date().getTime() });
+    await this.setState({
+      lists: [...tmp],
+      prev: [...tmp],
+    });
+    localStorage.setItem("all tasks", JSON.stringify(this.state));
   }
+
   changeTab = (event) => {
-    // console.log(event.target.id);
-    console.log("in change tab");
-    if (!event)
-      return <List task={this.state.lists} onClick={this.changeStatus} />;
-    console.log("in change tab", event.target.id);
-    const tmp = this.state.lists;
-    this.setState({
-      lists: [...tmp],
-    });
-    if (event.target.id == 1) {
-      const listDetails = Object.create(this.state.lists).filter(
-        (e) => e.status && e
-      );
-      console.log(<List task={listDetails} />);
-      return <List task={listDetails} />;
+    const id = Number(event.target.id);
+    const lists = this.state.prev.map((e) => {
+      return { ...e };
+    }); //to avoid mutating object
+    let listsTmp;
+    if (!lists) return;
+    switch (id) {
+      case 1:
+        listsTmp = lists.filter((e) => !e.status);
+        this.setState({
+          lists: listsTmp,
+          prev: this.state.prev,
+        });
+        break;
+      case 2:
+        listsTmp = lists.filter((e) => e.status);
+        if (!listsTmp) return;
+        listsTmp = listsTmp.map((e) => {
+          e.status = false;
+          return e;
+        });
+        this.setState({
+          lists: [...listsTmp],
+          prev: this.state.prev,
+        });
+        break;
+      default:
+        this.setState({
+          lists: this.state.prev,
+          prev: this.state.prev,
+        });
     }
-    return <List task={this.state.lists} onClick={this.changeStatus} />;
   };
-
-  changeStatus(event) {
-    // console.log(event.target);
+  changeStatus(index) {
+    // if (!event.target.id) return;
     const tmp = this.state.lists;
-    tmp[event.target.id].status = true;
+    tmp[index].status = !tmp[index].status;
     this.setState({
       lists: [...tmp],
+      prev: tmp,
     });
-    console.table(this.state.lists);
+    localStorage.setItem("all tasks", JSON.stringify(this.state));
+  }
+
+  componentDidMount() {
+    if (localStorage.getItem("all tasks")) {
+      this.setState(JSON.parse(localStorage.getItem("all tasks")));
+    }
+  }
+
+  delete(index) {
+    let tmp = this.state.prev;
+    tmp[index].isDeleted = true;
+    this.setState({
+      lists: [...tmp],
+      prev: [...tmp],
+    });
+    localStorage.setItem("all tasks", JSON.stringify(this.state));
+  }
+
+  update(index) {
+    let tmp = this.state.prev;
+    // tmp[index].task =
   }
 
   render() {
     let bottomItems = ["All", "Active", "Completed"];
-    console.log("redner in");
-
     return (
-      <Container>
-        <Row>
-          <Col sm={2}></Col>
-          <Col sm={8}>
-            <Input onKeyDown={this.onKeyDown} />
-            {this.changeTab()}
+      <>
+        <div className="shadow-lg">
+          <Accordion defaultActiveKey="0">
+            <Accordion.Toggle
+              as={Button}
+              variant="link"
+              eventKey="0"
+              style={{ display: "inline-block" }}
+            >
+              <FaSlidersH />
+            </Accordion.Toggle>
+            <Input onSave={this.save} />
+            <Accordion.Collapse eventKey="0">
+              <List
+                task={this.state.lists}
+                onChangeStatus={this.changeStatus}
+                onDelete={this.delete}
+              />
+            </Accordion.Collapse>
             <BottomItems
               arr={bottomItems}
-              onClick={this.changeTab}
+              onChangeTab={this.changeTab}
               refs={this.refs}
             />
-          </Col>
-          <Col sm={2}></Col>
-        </Row>
-      </Container>
+          </Accordion>
+        </div>
+      </>
     );
   }
 }
 
-const BottomItems = (props) => {
-  function ano(a) {
-    console.log(props);
-    props.onClick(a.target.id);
-  }
-  // let refs = props.refs;
-  const buttons = props.arr.map((e, i) => (
-    <Badge key={i} id={i} variant="light" value={e} onClick={props.onClick}>
-      {e}
-    </Badge>
-  ));
-  return <Alert variant="primary">{buttons}</Alert>;
-};
 export default ToDo;
