@@ -2,12 +2,12 @@ import React from "react";
 import Input from "./Input";
 import List from "./List";
 import BottomItems from "./BottomItems";
-import { FaBeer, FaSlidersH } from "react-icons/fa";
-import { Container, Row, Col, Button, Accordion } from "react-bootstrap";
+import { FaSlidersH } from "react-icons/fa";
+import { Button, Accordion } from "react-bootstrap";
 
 class ToDo extends React.Component {
   constructor(props) {
-    super(props);
+    super();
     this.state = {
       lists: [],
       prev: [],
@@ -16,6 +16,8 @@ class ToDo extends React.Component {
     this.save = this.save.bind(this);
     this.changeStatus = this.changeStatus.bind(this);
     this.delete = this.delete.bind(this);
+    this.update = this.update.bind(this);
+    this.replace = this.replace.bind(this);
   }
 
   async save(value) {
@@ -63,7 +65,6 @@ class ToDo extends React.Component {
     }
   };
   changeStatus(index) {
-    // if (!event.target.id) return;
     const tmp = this.state.lists;
     tmp[index].status = !tmp[index].status;
     this.setState({
@@ -91,11 +92,30 @@ class ToDo extends React.Component {
 
   update(index) {
     let tmp = this.state.prev;
+    this.updateValue = tmp[index].task;
+    this.updateIndex = index;
+    this.setState({
+      lists: [...this.state.lists],
+      prev: [...this.state.lists],
+    });
     // tmp[index].task =
   }
 
+  async replace(value, index) {
+    console.log("in replace method");
+    let tmp = this.state.prev;
+    tmp[index].task = value;
+    await this.setState({
+      lists: [...tmp],
+      prev: [...tmp],
+    });
+    localStorage.setItem("all tasks", JSON.stringify(this.state));
+    this.updateValue = "";
+    this.updateIndex = "";
+  }
+
   render() {
-    let bottomItems = ["All", "Active", "Completed"];
+    console.log(this.updateIndex, this.updateValue);
     return (
       <>
         <div className="shadow-lg">
@@ -108,16 +128,22 @@ class ToDo extends React.Component {
             >
               <FaSlidersH />
             </Accordion.Toggle>
-            <Input onSave={this.save} />
+            <Input
+              onSave={this.save}
+              value={this.updateValue}
+              index={this.updateIndex}
+              replace={this.replace}
+            />
             <Accordion.Collapse eventKey="0">
               <List
                 task={this.state.lists}
                 onChangeStatus={this.changeStatus}
                 onDelete={this.delete}
+                onUpdate={this.update}
               />
             </Accordion.Collapse>
             <BottomItems
-              arr={bottomItems}
+              arr={["All", "Active", "Completed"]}
               onChangeTab={this.changeTab}
               refs={this.refs}
             />

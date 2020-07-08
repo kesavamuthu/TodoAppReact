@@ -9,7 +9,7 @@ function BottomItems(props) {
       variant="light"
       value={e}
       onClick={props.onChangeTab}
-      style={{ padding: "10px", margin: "10px" }}
+      style={{ margin: "0px 10px" }}
     >
       {e}
     </Button>

@@ -1,23 +1,13 @@
 import React from "react";
 import { Form } from "react-bootstrap";
-import { FaBeer } from "react-icons/fa";
-import { Container, Row, Col, Button, Accordion } from "react-bootstrap";
-/* 
-function Input(props) {
-  return (
-    <Form.Control
-      size="lg"
-      type="text"
-      placeholder="Large text"
-      onKeyDown={props.onKeyDown}
-    />
-  );
-} */
+// import { FaBeer } from "react-icons/fa";
+// import { Container, Row, Col, Button, Accordion } from "react-bootstrap";
 
 class Input extends React.Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
+    this.tmp = props;
   }
 
   render() {
@@ -26,12 +16,23 @@ class Input extends React.Component {
         <Form.Control
           size="lg"
           type="text"
-          placeholder="Large text"
+          placeholder="What needs to be done ?"
           ref={this.inputRef}
+          value={this.tmp.value}
           onKeyDown={(event) => {
-            console.log(event.keyCode);
-            if (this.inputRef.current.value && event.keyCode === 13) {
+            console.log(this.props, this.inputRef.current.value.trim());
+            if (
+              this.inputRef.current.value &&
+              event.keyCode === 13 &&
+              this.props.index === undefined
+            ) {
               this.props.onSave(this.inputRef.current.value.trim());
+              this.inputRef.current.value = "";
+            } else if (event.keyCode === 13 && this.props.index) {
+              this.props.replace(
+                this.inputRef.current.value.trim(),
+                this.props.index
+              );
               this.inputRef.current.value = "";
             }
           }}
