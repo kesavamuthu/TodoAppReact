@@ -18,6 +18,7 @@ class ToDo extends React.Component {
     this.delete = this.delete.bind(this);
     this.update = this.update.bind(this);
     this.replace = this.replace.bind(this);
+    this.counter = this.counter.bind(this);
   }
 
   async save(value) {
@@ -36,6 +37,7 @@ class ToDo extends React.Component {
       return { ...e };
     }); //to avoid mutating object
     let listsTmp;
+    this.selectedTab = 0;
     if (!lists) return;
     switch (id) {
       case 1:
@@ -56,6 +58,7 @@ class ToDo extends React.Component {
           lists: [...listsTmp],
           prev: this.state.prev,
         });
+        this.selectedTab = 2;
         break;
       default:
         this.setState({
@@ -98,24 +101,30 @@ class ToDo extends React.Component {
       lists: [...this.state.lists],
       prev: [...this.state.lists],
     });
-    // tmp[index].task =
   }
 
   async replace(value, index) {
     console.log("in replace method");
     let tmp = this.state.prev;
     tmp[index].task = value;
+    this.updateValue = undefined;
+    this.updateIndex = undefined;
     await this.setState({
       lists: [...tmp],
       prev: [...tmp],
     });
     localStorage.setItem("all tasks", JSON.stringify(this.state));
-    this.updateValue = "";
-    this.updateIndex = "";
+  }
+
+  counter() {
+    this.count = 0;
+    this.state.lists.forEach((e) => {
+      if (!e.status && !e.isDeleted) this.count++;
+    });
   }
 
   render() {
-    console.log(this.updateIndex, this.updateValue);
+    this.counter();
     return (
       <>
         <div className="shadow-lg">
@@ -146,6 +155,8 @@ class ToDo extends React.Component {
               arr={["All", "Active", "Completed"]}
               onChangeTab={this.changeTab}
               refs={this.refs}
+              count={this.count}
+              selectedTab={this.selectedTab}
             />
           </Accordion>
         </div>

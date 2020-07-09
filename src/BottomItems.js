@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button } from "react-bootstrap";
+import { Alert, Button, Badge } from "react-bootstrap";
 
 function BottomItems(props) {
   const buttons = props.arr.map((e, i) => (
@@ -16,6 +16,10 @@ function BottomItems(props) {
   ));
   return (
     <Alert variant="light" style={{ textAlign: "center" }}>
+      <Badge className={"bottomPositionForSpan"}>
+        {props.count +
+          (props.selectedTab === 2 ? " items completed" : " items left")}
+      </Badge>
       {buttons}
     </Alert>
   );

@@ -1,7 +1,5 @@
 import React from "react";
 import { Form } from "react-bootstrap";
-// import { FaBeer } from "react-icons/fa";
-// import { Container, Row, Col, Button, Accordion } from "react-bootstrap";
 
 class Input extends React.Component {
   constructor(props) {

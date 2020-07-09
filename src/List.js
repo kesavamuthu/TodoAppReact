@@ -1,6 +1,6 @@
 import React from "react";
 import { ListGroup, InputGroup, Container } from "react-bootstrap";
-import { Row, Col, Badge, Alert, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { FaBeer } from "react-icons/fa";
 
 function List(props) {
