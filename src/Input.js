@@ -5,7 +5,7 @@ class Input extends React.Component {
   constructor(props) {
     super(props);
     this.inputRef = React.createRef();
-    this.tmp = props;
+    this.tmp = this.props.value;
   }
 
   render() {
@@ -16,7 +16,7 @@ class Input extends React.Component {
           type="text"
           placeholder="What needs to be done ?"
           ref={this.inputRef}
-          value={this.tmp.value}
+          value={this.tmp}
           onKeyDown={(event) => {
             console.log(this.props, this.inputRef.current.value.trim());
             if (

@@ -125,6 +125,7 @@ class ToDo extends React.Component {
 
   render() {
     this.counter();
+    console.log(this.updateValue);
     return (
       <>
         <div className="shadow-lg">
